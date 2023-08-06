@@ -2,9 +2,10 @@
 ## Adım 1: Proje Analizi ve Tasarım: 
 Proje Analizi ve Tasarım üzerine düşünüp, karar verdikten sonra 2. adıma geçtim.
 ## Adım 2: Veritabanı Oluşturma:
-Tabloları oluşturmak için veritabanı sistemi olarak PostreSQL kullandım ve .NET projesinde Entity Framework Core'i kullandım.Entity Framework Core, veritabanı tablolarını C# sınıflarına dönüştürmek ve otomatik olarak veritabanına yansıtmak için kullanışlı bir ORM (Object-Relational Mapping) aracıdır. Bu proje için 3 adet tablo modeli oluşturmaya karar verdim.Bunlar 
-1.Apartment Class:
+Tabloları oluşturmak için veritabanı sistemi olarak PostreSQL kullandım ve .NET projesinde Entity Framework Core'i kullandım.Entity Framework Core, veritabanı tablolarını C# sınıflarına dönüştürmek ve otomatik olarak veritabanına yansıtmak için kullanışlı bir ORM (Object-Relational Mapping) aracıdır. Bu proje için 3 adet tablo modeli oluşturmaya karar verdim.Bunlar:
 ````
+1.Apartment Class:
+
 public class Apartment
 {
     public int ApartmentId { get; set; }
@@ -15,9 +16,9 @@ public class Apartment
     public int ApartmentNumber { get; set; }
     public string OwnerOrTenant { get; set; }
 }
-```
+
 2.User Class:
-```
+
 public class User
 {
     public int UserId { get; set; }
@@ -27,10 +28,10 @@ public class User
     public string Phone { get; set; }
     public string CarPlateNumber { get; set; }
 }
-```
+
 3.Dues and invoices:
 
-```public class DuesInvoice
+public class DuesInvoice
 {
     public int DuesInvoiceId { get; set; }
     public int ApartmentId { get; set; }
@@ -42,9 +43,9 @@ public class User
     public decimal GasBill { get; set; }
 
     public Apartment Apartment { get; set; }
-}```
+}
 Message:
-```
+
     public int Id { get; set; }
     public string Subject { get; set; }
     public string Content { get; set; }
@@ -56,14 +57,14 @@ Message:
 
     // Navigasyon Property
     public User User { get; set; }
-```
+
 Role:
-```
+
    public string RoleName { get; set; }
 
     // Navigasyon Property
     public virtual List<User> Users { get; set; }
-    
+
 ```
 
 Son olarak, veritabanı bağlantısını ve tabloları oluşturma işlemlerini gerçekleştirmek için DbContext sınıfını oluşturmalıyız:
