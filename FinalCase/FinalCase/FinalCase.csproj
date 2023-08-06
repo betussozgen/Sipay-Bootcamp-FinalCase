@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.6.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.9" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.6.23329.7" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <Compile Remove="ManagementOperations\**" />
+    <Compile Remove="Validator\**" />
+    <Content Remove="ManagementOperations\**" />
+    <Content Remove="Validator\**" />
+    <EmbeddedResource Remove="ManagementOperations\**" />
+    <EmbeddedResource Remove="Validator\**" />
+    <None Remove="ManagementOperations\**" />
+    <None Remove="Validator\**" />
   </ItemGroup>
+
+  
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.0.123" />
@@ -39,14 +42,8 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ManagementOperations\AidatInfo\" />
-    <Folder Include="ManagementOperations\FaturaInfo\" />
-    <Folder Include="ManagementOperations\UserInfo\" />
-    <Folder Include="Validator\AidatValidator\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FinalCase.DataAccess\FinalCase.DataAccess.csproj" />
+    <ProjectReference Include="..\FinalCase.Schema\FinalCase.Schema.csproj" />
   </ItemGroup>
 
 </Project>

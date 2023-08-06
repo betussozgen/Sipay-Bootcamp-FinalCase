@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace FinalCase.DataAccess.Repository;
 
-public interface IBillRepository : IGenericRepository<Bill>
+public interface IMessageRepository : IGenericRepository<Message>
 {
 }
+
+

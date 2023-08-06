@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace FinalCase.DataAccess.Repository;
 
+
+
 public interface IApartmentRepository : IGenericRepository<Apartment>
 {
 }

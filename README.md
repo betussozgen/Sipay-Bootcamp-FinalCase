@@ -1,7 +1,7 @@
 
-# Adım 1: Proje Analizi ve Tasarım: 
+## Adım 1: Proje Analizi ve Tasarım: 
 Proje Analizi ve Tasarım üzerine düşündükten ve karar verdikten sonra 2. adıma geçtim.
-# Adım 2: Veritabanı Oluşturma:
+## Adım 2: Veritabanı Oluşturma:
 Tabloları oluşturmak için veritabanı sistemi olarak PostreSQL kullandım ve .NET projesinde Entity Framework Core'i kullandım.Entity Framework Core, veritabanı tablolarını C# sınıflarına dönüştürmek ve otomatik olarak veritabanına yansıtmak için kullanışlı bir ORM (Object-Relational Mapping) aracıdır.
 Bu proje için 3 adet tablo modeli oluşturmaya karar verdim.
 1.Apartment Class:
@@ -28,11 +28,10 @@ public class User
     public string Phone { get; set; }
     public string CarPlateNumber { get; set; }
 }
-
 ```
 3.Dues and invoices:
-```
-public class DuesInvoice
+
+```public class DuesInvoice
 {
     public int DuesInvoiceId { get; set; }
     public int ApartmentId { get; set; }
@@ -44,14 +43,13 @@ public class DuesInvoice
     public decimal GasBill { get; set; }
 
     public Apartment Apartment { get; set; }
-}
+}```
 
-```
 Son olarak, veritabanı bağlantısını ve tabloları oluşturma işlemlerini gerçekleştirmek için DbContext sınıfını oluşturmalıyız:
 Burada FinalCaseDbContext sınıfı, DbContext sınıfını kalıtım alarak veritabanı bağlantısını sağlar ve DbSet özellikleri üzerinden tablolara erişim imkanı sunar.
 Veritabanı bağlantısını yapılandırmak için proje dosyanızda Startup.cs dosyasını düzenledim.
-```
- //dbContext
+
+``` //dbContext
             var dbType = Configuration.GetConnectionString("DbType");
             if (dbType == "Sql")
             {
@@ -70,5 +68,19 @@ Veritabanı bağlantısını yapılandırmak için proje dosyanızda Startup.cs 
 Son olarak, veritabanındaki tabloları oluşturmak için Migrations kullanarak veritabanını güncelledim.
 PAckage Manager Console'ı açarak, Add-Migration InitialCreate komutunu ardından Update-Database komutunu çalıştırarak veritabanındaki tabloları oluşturdum. Bu işlemlerden sonra artık tablolarım bulunmaktadır.
 
-# Adım 3:
+## Adım 3: 
 
+Repository oluşturdum.
+
+
+Schema dosyası oluşturdum.
+apartment... dosyaları oluşturduldu.
+
+```startap.cs dosyasına mapper config olarak ekledim.
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MapperConfig());
+            });
+            services.AddSingleton(config.CreateMapper());
+```

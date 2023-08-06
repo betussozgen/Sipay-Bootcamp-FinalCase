@@ -1,5 +1,7 @@
+using AutoMapper;
 using FinalCase.DataAccess;
-using FinalCase.DBOperations;
+using FinalCase.DataAccess.Repository;
+using FinalCase.Schema;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -37,8 +39,6 @@ namespace FinalCase
             });
 
             //dbContext
-
-
             var dbType = Configuration.GetConnectionString("DbType");
             if (dbType == "Sql")
             {
@@ -54,8 +54,26 @@ namespace FinalCase
             }
 
 
-           // services.AddDbContext<SiteManagementDbContext>(options => options.UseInMemoryDatabase(databaseName: "SiteManagementDB"));
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddScoped<IApartmentRepository, ApartmentRepository>();
+            services.AddScoped<IDueInvoiceRepository, DueInvoiceRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            //services.AddScoped<IBillRepository, BillRepository>();
+            //services.AddScoped<IDueRepository, DueRepository>();
+            //services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
+
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MapperConfig());
+            });
+            services.AddSingleton(config.CreateMapper());
+
+
+            // services.AddDbContext<SiteManagementDbContext>(options => options.UseInMemoryDatabase(databaseName: "SiteManagementDB"));
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

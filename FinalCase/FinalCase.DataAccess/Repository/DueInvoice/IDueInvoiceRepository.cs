@@ -6,8 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FinalCase.DataAccess.Repository;
-public interface IPaymentRepository : IGenericRepository<Payment>
+public interface IDueInvoiceRepository : IGenericRepository<DueInvoice>
 {
 }
-
 

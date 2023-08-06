@@ -16,8 +16,13 @@ public class Role : BaseModel
 {
     public string RoleName { get; set; }
 
+    // Navigasyon Property
+    public virtual List<User> Users { get; set; }
+
+
+
     // Role sınıfına Users adında bir koleksiyon özelliği ekleme
-    public virtual ICollection<User> Users { get; set; }
+    //public virtual ICollection<User> Users { get; set; }
 
 }
 
@@ -30,7 +35,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         // RoleName alanı için sütun adı ve diğer ayarlar
         builder.Property(r => r.RoleName)
                .HasColumnName("RoleName")
-               .IsRequired();
+               .IsRequired(true);
 
     }
 }

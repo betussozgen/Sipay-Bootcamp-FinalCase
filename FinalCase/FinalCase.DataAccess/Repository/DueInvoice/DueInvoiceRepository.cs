@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace FinalCase.DataAccess.Repository;
 
-public class PaymentRepository : GenericRepository<Payment>, IPaymentRepository
+public class DueInvoiceRepository : GenericRepository<DueInvoice>, IDueInvoiceRepository
 {
     private readonly FinalCaseDbContext dbContext;
-
-    public PaymentRepository(FinalCaseDbContext dbContext) : base(dbContext)
+    public DueInvoiceRepository(FinalCaseDbContext dbContext) : base(dbContext)
     {
         this.dbContext = dbContext;
     }
 }
+

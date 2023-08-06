@@ -1,6 +1,8 @@
-﻿using FinalCase.DataAccess;
+﻿using AutoMapper;
+using FinalCase.DataAccess;
 using FinalCase.DataAccess.Domain;
 using FinalCase.DataAccess.Repository;
+using FinalCase.Schema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,63 +19,67 @@ public class ApartmentController : ControllerBase
     private readonly IApartmentRepository repository;
     //private readonly IMapper mapper;
     private readonly FinalCaseDbContext dbContext;
-    public ApartmentController(FinalCaseDbContext dbContext)
+    private readonly IMapper mapper;
+    public ApartmentController(FinalCaseDbContext dbContext, IMapper mapper)
     {
         this.dbContext = dbContext;
+        this.mapper = mapper;   
     }
-    public ApartmentController()
-    {
-        this.repository = repository;
-        //this.mapper = mapper;
-    }
+ 
 
-    // Sadece yöneticilere izin verilen bir işlem
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public ApiResponse<List<Apartment>> GetAll()
+    public ApiResponse<List<ApartmentResponse>> GetAll()
     {
-        var entityList = dbContext.Set<Apartment>().ToList();
-        return new ApiResponse<List<Apartment>>(entityList);
+        var entityList = repository.GetAll();
+        var mapped = mapper.Map<List<Apartment>, List<ApartmentResponse>>(entityList);
+        return new ApiResponse<List<ApartmentResponse>>(mapped);
     }
 
-    // Sadece yöneticilere izin verilen bir işlem
+
     [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
-    public ApiResponse<Apartment> Get(int id)
+    public ApiResponse<ApartmentResponse> Get(int id)
     {
-        var entity = dbContext.Set<Apartment>().Find(id);
-        return new ApiResponse<Apartment>(entity);
+        var entity = repository.GetById(id);
+        var mapped = mapper.Map<Apartment, ApartmentResponse>(entity);
+        return new ApiResponse<ApartmentResponse>(mapped);
     }
 
-    // Sadece yöneticilere izin verilen bir işlem
+ 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public ApiResponse Post([FromBody] Apartment request)
+    public ApiResponse Post([FromBody] ApartmentRequest request)
     {
-        dbContext.Set<Apartment>().Add(request);
-        dbContext.SaveChanges();
+        var entity = mapper.Map<ApartmentRequest, Apartment>(request);
+        entity.IsOccupied = true;
+        repository.Insert(entity);
+        repository.Save();
         return new ApiResponse();
     }
 
-    // Sadece yöneticilere izin verilen bir işlem
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
-    public ApiResponse Put(int id, [FromBody] Apartment request)
+    public ApiResponse Put(int id, [FromBody] ApartmentRequest request)
     {
-        request.ApartmentNo = id;
-        dbContext.Set<Apartment>().Update(request);
-        dbContext.SaveChanges();
+
+        var entity = mapper.Map<ApartmentRequest, Apartment>(request);
+        entity.IsOccupied = true;
+        repository.Insert(entity);
+        entity.ApartmentNo = id;
+
+        repository.Update(entity);
+        repository.Save();
         return new ApiResponse();
     }
 
-    // Sadece yöneticilere izin verilen bir işlem
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public ApiResponse Delete(int id)
     {
-        var entity = dbContext.Set<Apartment>().Find(id);
-        dbContext.Set<Apartment>().Remove(entity);
-        dbContext.SaveChanges();
+        repository.DeleteById(id);
+        repository.Save();
         return new ApiResponse();
     }
 }

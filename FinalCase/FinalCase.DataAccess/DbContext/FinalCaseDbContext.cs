@@ -19,9 +19,10 @@ public class FinalCaseDbContext : DbContext
     //DbSet
     // dbset
     public DbSet<Apartment> Apartments { get; set; }
-    public DbSet<Bill> Bills { get; set; }
-    public DbSet<Due> Dues { get; set; }
-    public DbSet<Payment> Payments { get; set; }
+    //public DbSet<Bill> Bills { get; set; }
+    //public DbSet<Due> Dues { get; set; }
+    //public DbSet<Payment> Payments { get; set; }
+    public DbSet<DueInvoice> DuesInvoices { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
 
@@ -31,9 +32,9 @@ public class FinalCaseDbContext : DbContext
 
 
         modelBuilder.ApplyConfiguration(new ApartmentConfiguration());
-        modelBuilder.ApplyConfiguration(new BillConfiguration());
-        modelBuilder.ApplyConfiguration(new DueConfiguration());
-        modelBuilder.ApplyConfiguration(new PaymentConfiguration());
+        //modelBuilder.ApplyConfiguration(new BillConfiguration());
+        //modelBuilder.ApplyConfiguration(new DueConfiguration());
+        //modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
 

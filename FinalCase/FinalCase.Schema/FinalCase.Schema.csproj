@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Due\" />
+	  <Folder Include="Bill\" />
+	  <Folder Include="Payment\" />
+	  <Folder Include="Role\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\FinalCase.DataAccess\FinalCase.DataAccess.csproj" />
+	</ItemGroup>
+	
+</Project>
