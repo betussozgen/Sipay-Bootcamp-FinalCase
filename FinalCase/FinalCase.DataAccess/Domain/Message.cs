@@ -15,17 +15,16 @@ namespace FinalCase.DataAccess.Domain;
 [Table("Message", Schema = "dbo")]
 public class Message : BaseModel
 {
-    public int Id { get; set; }
-    public string Subject { get; set; }
-    public string Content { get; set; }
+    public int MessageId { get; set; }
+    public int SenderId { get; set; }
+    public int ReceiverId { get; set; }
+    public string MessageContent { get; set; }
     public bool IsRead { get; set; }
-    public DateTime DateSent { get; set; }
 
-    // Foreign Key
-    public int UserId { get; set; }
+    // Navigation properties
+    public User Sender { get; set; }
+    public User Receiver { get; set; }
 
-    // Navigasyon Property
-    public User User { get; set; }
 }
 
 
@@ -35,40 +34,18 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
 {
     public void Configure(EntityTypeBuilder<Message> builder)
     {
-        // Subject sütunu
-        builder.Property(message => message.Subject)
-               .HasColumnName("Subject")
-               .HasMaxLength(100) // Maksimum uzunluk 100 karakter
-               .IsRequired();    // Zorunlu alan
+        builder.ToTable("Messages", "dbo"); // Tablo adı ve şema belirleme
 
-        // Content sütunu
-        builder.Property(message => message.Content)
-               .HasColumnName("Content")
-               .HasMaxLength(500) // Maksimum uzunluk 500 karakter
-               .IsRequired();    // Zorunlu alan
+        builder.HasKey(m => m.MessageId); // Primary key belirleme
+        builder.Property(m => m.MessageId).HasColumnName("MessageId").IsRequired(); // Sütun adı ve zorunlu olduğunu belirleme
 
-        // IsRead sütunu
-        builder.Property(message => message.IsRead)
-               .HasColumnName("IsRead")
-               .IsRequired();    // Zorunlu alan
+        builder.Property(m => m.SenderId).IsRequired(); // Diğer sütunları da benzer şekilde belirleme
+        builder.Property(m => m.ReceiverId).IsRequired();
+        builder.Property(m => m.MessageContent).HasMaxLength(1000).IsRequired();
+        builder.Property(m => m.IsRead).IsRequired();
 
-        // DateSent sütunu
-        builder.Property(message => message.DateSent)
-               .HasColumnName("DateSent")
-               .IsRequired();    // Zorunlu alan
-
-        // UserId sütunu (Foreign key)
-        builder.Property(message => message.UserId)
-               .HasColumnName("UserId")
-               .IsRequired();    // Zorunlu alan
-
-        // Navigasyon Property
-
-        // User ile ilişki tanımlama (Foreign key ilişkisi)
-        builder.HasOne(message => message.User)
-               .WithMany(user => user.Messages)
-               .HasForeignKey(message => message.UserId)
-               .OnDelete(DeleteBehavior.Restrict); // İlişkili tablodan veri silinirse sadece referansı null olarak ayarla
+        builder.HasOne(m => m.Sender).WithMany(u => u.SentMessages).HasForeignKey(m => m.SenderId); // İlişkiyi belirleme
+        builder.HasOne(m => m.Receiver).WithMany(u => u.ReceivedMessages).HasForeignKey(m => m.ReceiverId); // İlişkiyi belirleme
 
     }
 }

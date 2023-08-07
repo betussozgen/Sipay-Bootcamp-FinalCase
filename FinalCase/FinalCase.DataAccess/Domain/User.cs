@@ -15,30 +15,23 @@ namespace FinalCase.DataAccess.Domain;
 
 public class User : BaseModel
 {
-   
+
+    public int UserId { get; set; }
     public string TcNo { get; set; }
-    public string Name { get; set; }
-    public string Surname { get; set; }
+    public string Username { get; set; }    
+    public string PasswordHash { get; set; }
     public string Email { get; set; }
-    public string PhoneNumber { get; set; }
-    public bool CarInfo { get; set; }
+    public string Phone { get; set; }
+    public string VehiclePlateNumber { get; set; }
+    public string Role { get; set; }    
 
-    // Navigasyon Property
-    public Role Role { get; set; }
-    public Apartment Apartment { get; set; }
-    //public List<Payment> Payments { get; set; }
-    public virtual List<Message> Messages { get; set; }
-
-
-
-    // RoleID adında bir özellik ekleyerek Role ile ilişkilendirme sağlanıyor
-    public int RoleID { get; set; }
-
-
-
-    // User sınıfına Payments adında bir ICollection<Payment> özelliği ekleme
-    //public virtual ICollection<Payment> Payments { get; set; }
-    //public virtual Role Roles { get; set; }
+    // Navigation properties
+    public ICollection<Apartment>Apartments { get; set; }
+    public ICollection<Payment> Payments { get; set; }
+    public ICollection<Message> SentMessages { get; set; }
+    public ICollection<Message> ReceivedMessages { get; set; }
+    public ICollection<DebtCredit> DebtsCredits { get; set; }
+    
 
 }
 
@@ -48,64 +41,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        // TcNo alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.TcNo)
-               .HasColumnName("TcNo")
-               .ValueGeneratedNever()
-               .HasMaxLength(11) // TcNo alanı maksimum 11 karakter uzunluğunda olacak
-               .IsRequired(true);
-        // TcNo alanının benzersiz (unique) olması için indeks oluşturma
-        builder.HasIndex(u => u.TcNo).IsUnique();
 
-        // Name alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.Name)
-               .HasColumnName("Name")
-               .HasMaxLength(50)
-               .IsRequired(true);
+        builder.HasKey(u => u.UserId); // Primary key belirleme
+        builder.Property(u => u.UserId).HasColumnName("UserId").IsRequired(); // Sütun adı ve zorunlu olduğunu belirleme
 
-        // Surname alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.Surname)
-               .HasColumnName("Surname")
-               .HasMaxLength(50)
-               .IsRequired(true);
+        builder.Property(u => u.TcNo).HasMaxLength(11).IsRequired(); // Diğer sütunları da benzer şekilde belirleme
+        builder.Property(u => u.Username).HasMaxLength(50).IsRequired();
+        builder.Property(u => u.PasswordHash).HasMaxLength(100).IsRequired();
+        builder.Property(u => u.Email).HasMaxLength(100).IsRequired();
+        builder.Property(u => u.Phone).HasMaxLength(20).IsRequired();
+        builder.Property(u => u.VehiclePlateNumber).HasMaxLength(20);
+        
+        //RuleFor(user => user.Role)
+        //   .NotNull().NotEmpty().WithMessage("Please ensure you have entered your {PropertyName}")
+        //   .Must(role => role == "User" || role == "Admin").WithMessage("Please ensure the {PropertyName} is either 'User' or 'Admin'.")
+        // Navigation properties'in belirtilmesi
+        builder.HasMany(u => u.Apartments).WithOne(a => a.Users).HasForeignKey(a => a.UserId);
+        builder.HasMany(u => u.Payments).WithOne(p => p.User).HasForeignKey(p => p.UserId);
+        builder.HasMany(u => u.SentMessages).WithOne(m => m.Sender).HasForeignKey(m => m.SenderId);
+        builder.HasMany(u => u.ReceivedMessages).WithOne(m => m.Receiver).HasForeignKey(m => m.ReceiverId);
+        builder.HasMany(u => u.DebtsCredits).WithOne(d => d.User).HasForeignKey(d => d.UserId);
 
-        // Email alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.Email)
-               .HasColumnName("Email")
-               .IsRequired(true);
-
-        // PhoneNumber alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.PhoneNumber)
-               .HasColumnName("PhoneNumber")
-               .IsRequired(true);
-
-        // CarInfo alanı için sütun adı ve diğer ayarlar
-        builder.Property(u => u.CarInfo)
-               .HasColumnName("CarInfo")
-               .IsRequired(true);
-
-        // Roles tablosu ile ilişkiyi belirleme (Foreign Key)
-        builder.HasOne(u => u.Role)
-               .WithMany(u => u.Users)
-               .HasForeignKey(u => u.RoleID)
-               .IsRequired();
-
-        // Apartment ile ilişki belirtme
-        builder.HasOne(u => u.Apartment)
-            .WithMany(a => a.Users)
-            .HasForeignKey(u => u.Apartment)
-            .IsRequired(false); // Eğer ilişki zorunlu değilse IsRequired(false) yapabilir.
-
-        //// Payments ile ilişki belirtme (Birden fazla ödeme olabilir)
-        //builder.HasMany(u => u.Payments)
-        //    .WithOne(p => p.Users)
-        //    .HasForeignKey(p => p.UserId)
-        //    .IsRequired();
-
-        // Messages ile ilişki belirtme (Birden fazla mesaj olabilir)
-        builder.HasMany(u => u.Messages)
-            .WithOne(m => m.User)
-            .HasForeignKey(m => m.UserId)
-            .IsRequired();
     }
 }

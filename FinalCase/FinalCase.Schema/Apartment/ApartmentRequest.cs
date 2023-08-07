@@ -8,11 +8,12 @@ namespace FinalCase.Schema;
 
 public class ApartmentRequest
 {
-    public string Block { get; set; }
-    public bool IsOccupied { get; set; }
+    public string BlockNumber { get; set; }
+    public string Status { get; set; }
     public string Type { get; set; }
-    public int FloorNo { get; set; }
-    public int ApartmentNo { get; set; }
-    public bool IsOwner { get; set; }
+    public int FloorNumber { get; set; }
+    public int ApartmentNumber { get; set; }
+    public string OwnerOrTenant { get; set; }
+    public int UserId { get; set; }
 }
 

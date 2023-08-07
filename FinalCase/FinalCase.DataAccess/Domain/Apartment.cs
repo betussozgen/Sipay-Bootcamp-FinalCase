@@ -13,25 +13,19 @@ namespace FinalCase.DataAccess.Domain;
 [Table("Apartment", Schema ="dbo")]
 public class Apartment : BaseModel
 {
+    public int ApartmentId { get; set; }
+    public string BlockNumber { get; set; }
+    public string Status { get; set; }
+    public string Type { get; set; }
+    public int FloorNumber { get; set; }
+    public int ApartmentNumber { get; set; }
+    public string OwnerOrTenant { get; set; }
+    public int UserId { get; set; } // User'a referans sütunu
 
-    public string Block { get; set; }
-    public bool IsOccupied { get; set; } //Dolu-Bos
-    public string Type { get; set;} //2+1
-    public int FloorNo { get; set;}
-    public int ApartmentNo { get; set; }
-    public bool IsOwner { get; set; } //kiracı-Sahibi
-
-    // Navigasyon Property
-    //public List<Payment> Payments { get; set; }
-    public virtual List<User> Users { get; set; }
-
-    public virtual ICollection<DueInvoice> DueInvoices { get; set; } 
-
-    // Apartment sınıfına Bill adında bir ICollection<Bill> özelliği ekleme
-    //public virtual ICollection<Bill> Bill { get; set; }
-
-    // Apartment sınıfına Dues adında bir ICollection<Due> özelliği ekleme
-    //public virtual ICollection<Due> Dues { get; set; }
+    // Navigation properties
+    public User Users { get; set; }
+    public ICollection<Due> Dues { get; set; }
+    public ICollection<Bill> Bills { get; set; }
 }
 
 
@@ -40,38 +34,21 @@ public class ApartmentConfiguration : IEntityTypeConfiguration<Apartment>
     public void Configure(EntityTypeBuilder<Apartment> builder)
     {
 
-        // Block alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.Block)
-               .HasColumnName("Block")
-               .HasMaxLength(50) // Örnek olarak, maksimum uzunluğu 50 karakter olarak belirtiyoruz.
-               .IsRequired(true); // Bu alanın zorunlu olduğunu belirtiyoruz.
+        builder.HasKey(a => a.ApartmentId); // Primary key belirleme
+        builder.Property(a => a.ApartmentId).HasColumnName("ApartmentId").IsRequired(); // Sütun adı ve zorunlu olduğunu belirleme
 
-        // Status alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.IsOccupied)
-               .HasColumnName("Status")
-               .IsRequired(true);
+        builder.Property(a => a.BlockNumber).HasMaxLength(50).IsRequired(); // Diğer sütunları da benzer şekilde belirleme
+        builder.Property(a => a.Status).HasMaxLength(50).IsRequired();
+        builder.Property(a => a.Type).HasMaxLength(50).IsRequired();
+        builder.Property(a => a.FloorNumber).IsRequired();
+        builder.Property(a => a.ApartmentNumber).IsRequired();
+        builder.Property(a => a.OwnerOrTenant).HasMaxLength(50).IsRequired();
 
-        // Type alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.Type)
-               .HasColumnName("Type")
-               .HasMaxLength(50)
-               .IsRequired(true);
+        // İlişkileri konfigüre etme
+        builder.HasOne(a => a.Users).WithMany(u => u.Apartments).HasForeignKey(a => a.UserId); // Apartment ile User ilişkisini belirtme
+        builder.HasMany(a => a.Dues).WithOne(d => d.Apartment).HasForeignKey(d => d.ApartmentId);
+        builder.HasMany(a => a.Bills).WithOne(b => b.Apartment).HasForeignKey(b => b.ApartmentId);
 
-        // FloorNo alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.FloorNo)
-               .HasColumnName("FloorNo")
-               .IsRequired(true);
-
-        // ApartmentNo alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.ApartmentNo)
-               .HasColumnName("ApartmentNo")
-               .IsRequired(true);
-
-        // OwnerOrTenant alanı için sütun adı ve diğer ayarlar
-        builder.Property(a => a.IsOwner)
-               .HasColumnName("OwnerOrTenant")
-               .HasMaxLength(50)
-               .IsRequired(true);
 
     }
 }

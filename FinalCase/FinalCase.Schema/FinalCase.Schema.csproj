@@ -11,13 +11,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Due\" />
-	  <Folder Include="Bill\" />
-	  <Folder Include="Payment\" />
-	  <Folder Include="Role\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\FinalCase.DataAccess\FinalCase.DataAccess.csproj" />
 	</ItemGroup>
 	
