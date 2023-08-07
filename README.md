@@ -104,12 +104,34 @@ Son olarak, veritabanındaki tabloları oluşturmak için Migrations kullanarak 
 PAckage Manager Console'ı açarak, ``` Add-Migration InitialCreate```  komutunu ardından ``` Update-Database```  komutunu çalıştırarak veritabanındaki tabloları oluşturdum. Bu işlemlerden sonra artık tablolarım bulunmaktadır.
 
 ## 
+AutoMapper implementasyonu gerçekleştirdim. Schema projesi ekledim. Modellerimi orada tanımladım.
+```
+<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.0" />
+	</ItemGroup>
+```
 
-Repository oluşturdum.
+
+Automapper Config'i oluşturdum. Profile dan türedi. burada mapping tanımlarını ekleyeceğim. Burada Requestve Response olarak dosyaları ekledim.
+
+response  ve request gibi sınıflar, istemci ve sunucu arasındaki iletişimi düzenlemek, veri güvenliğini sağlamak ve kodun daha düzenli ve esnek olmasını sağlamak amacıyla kullanılırlar.
+
+Request Classı : Bu sınıf, istemciden alınan verileri temsil etmek için kullanılır. Sadece talep edilen özelliklerin yer aldığı bir yapıdır. Diğer gereksiz özellikler bu sınıfta yer almaz.
+
+Response classı: Bu sınıf, sunucudan istemciye gönderilecek verileri temsil eder. İstemcinin sadece görmesi gereken özellikleri içerir. Diğer gereksiz özellikler bu sınıfta yer almaz.
+
+------Buraya istemci requst fotosu ekleyebilrisin!-----
+![alt text](Sipay-Bootcamp-FinalCase\FinalCase\FinalCase\Assets\RequestResponse.png)
 
 
-Schema dosyası oluşturdum.
-apartment... dosyaları oluşturduldu.
+<img src="Sipay-Bootcamp-FinalCase\FinalCase\FinalCase\Assets\RequestResponse.png" width="auto">
+
+
+Tüm classların response ve request sayfaları oluşturuldu.
+
+
+
+
 
 ```startap.cs dosyasına mapper config olarak ekledim.
 
