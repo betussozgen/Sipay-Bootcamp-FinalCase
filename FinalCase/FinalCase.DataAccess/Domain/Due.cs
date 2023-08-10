@@ -17,10 +17,17 @@ public class Due : BaseModel
     public int DuesId { get; set; }
     public int ApartmentId { get; set; }
     public string Month { get; set; }
+    public string Year { get; set; }
+    public string DueStatus { get; set; }
     public decimal Amount { get; set; }
 
     // Navigation property
     public Apartment Apartment { get; set; }
+}
+public enum DueStatus
+{
+    Unpaid = 0,
+    Paid = 1,    
 }
 
 

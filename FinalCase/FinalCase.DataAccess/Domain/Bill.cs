@@ -22,7 +22,7 @@ public class Bill
     // Navigation property
     public Apartment Apartment { get; set; }
 
-    public ICollection<Payment> Payments { get; set; }
+    public virtual List<Payment> Payments { get; set; }
 }
 
 

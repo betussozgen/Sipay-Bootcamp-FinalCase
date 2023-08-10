@@ -24,8 +24,8 @@ public class Apartment : BaseModel
 
     // Navigation properties
     public User Users { get; set; }
-    public ICollection<Due> Dues { get; set; }
-    public ICollection<Bill> Bills { get; set; }
+    public virtual List<Due> Dues { get; set; }
+    public virtual List<Bill> Bills { get; set; }
 }
 
 

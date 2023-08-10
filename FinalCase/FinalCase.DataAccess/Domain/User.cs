@@ -26,11 +26,11 @@ public class User : BaseModel
     public string Role { get; set; }    
 
     // Navigation properties
-    public ICollection<Apartment>Apartments { get; set; }
-    public ICollection<Payment> Payments { get; set; }
-    public ICollection<Message> SentMessages { get; set; }
-    public ICollection<Message> ReceivedMessages { get; set; }
-    public ICollection<DebtCredit> DebtsCredits { get; set; }
+    public virtual List<Apartment>Apartments { get; set; }
+    public virtual List<Payment> Payments { get; set; }
+    public virtual List<Message> SentMessages { get; set; }
+    public virtual List<Message> ReceivedMessages { get; set; }
+    //public virtual List<DebtCredit> Deb/*tsCredits { get; set; }*/
     
 
 }
@@ -60,7 +60,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(u => u.Payments).WithOne(p => p.User).HasForeignKey(p => p.UserId);
         builder.HasMany(u => u.SentMessages).WithOne(m => m.Sender).HasForeignKey(m => m.SenderId);
         builder.HasMany(u => u.ReceivedMessages).WithOne(m => m.Receiver).HasForeignKey(m => m.ReceiverId);
-        builder.HasMany(u => u.DebtsCredits).WithOne(d => d.User).HasForeignKey(d => d.UserId);
+        //builder.HasMany(u => u.DebtsCredits).WithOne(d => d.User).HasForeignKey(d => d.UserId);
 
     }
 }

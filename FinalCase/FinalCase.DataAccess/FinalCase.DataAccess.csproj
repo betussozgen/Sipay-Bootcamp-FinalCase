@@ -23,5 +23,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\FinalCase.Base\FinalCase.Base.csproj" />
 	</ItemGroup>
+	
+
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
 
 </Project>
