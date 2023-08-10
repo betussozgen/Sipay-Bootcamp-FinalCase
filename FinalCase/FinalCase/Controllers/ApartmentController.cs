@@ -2,13 +2,14 @@
 using FinalCase.DataAccess;
 using FinalCase.DataAccess.Domain;
 using FinalCase.DataAccess.Repository;
+using FinalCase.DataAccess.Uow;
 using FinalCase.Schema;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SipayApi.Base;
+using FinalCase.Base;
 
-namespace FinalCase.Controllers.ManagementController;
+namespace FinalCase.Controllers;
 
 
 
@@ -16,22 +17,20 @@ namespace FinalCase.Controllers.ManagementController;
 [Route("Final/Case/[controller]")]
 public class ApartmentController : ControllerBase
 {
-    private readonly IApartmentRepository repository;
-    //private readonly IMapper mapper;
-    private readonly FinalCaseDbContext dbContext;
+    private readonly IUnitOfWork unitOfWork;
     private readonly IMapper mapper;
-    public ApartmentController(FinalCaseDbContext dbContext, IMapper mapper)
+    public ApartmentController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        this.dbContext = dbContext;
-        this.mapper = mapper;   
+        this.unitOfWork = unitOfWork;
+        this.mapper = mapper;
     }
- 
+
 
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public ApiResponse<List<ApartmentResponse>> GetAll()
     {
-        var entityList = repository.GetAll();
+        var entityList = unitOfWork.ApartmentRepository.GetAll();
         var mapped = mapper.Map<List<Apartment>, List<ApartmentResponse>>(entityList);
         return new ApiResponse<List<ApartmentResponse>>(mapped);
     }
@@ -41,20 +40,20 @@ public class ApartmentController : ControllerBase
     [HttpGet("{id}")]
     public ApiResponse<ApartmentResponse> Get(int id)
     {
-        var entity = repository.GetById(id);
+        var entity = unitOfWork.ApartmentRepository.GetById(id);
         var mapped = mapper.Map<Apartment, ApartmentResponse>(entity);
         return new ApiResponse<ApartmentResponse>(mapped);
     }
 
- 
+
     [Authorize(Roles = "Admin")]
     [HttpPost]
     public ApiResponse Post([FromBody] ApartmentRequest request)
     {
         var entity = mapper.Map<ApartmentRequest, Apartment>(request);
-        entity.IsOccupied = true;
-        repository.Insert(entity);
-        repository.Save();
+
+        unitOfWork.ApartmentRepository.Insert(entity);
+        unitOfWork.ApartmentRepository.Save();
         return new ApiResponse();
     }
 
@@ -64,12 +63,12 @@ public class ApartmentController : ControllerBase
     {
 
         var entity = mapper.Map<ApartmentRequest, Apartment>(request);
-        entity.IsOccupied = true;
-        repository.Insert(entity);
-        entity.ApartmentNo = id;
 
-        repository.Update(entity);
-        repository.Save();
+        unitOfWork.ApartmentRepository.Insert(entity);
+        entity.ApartmentNumber = id;
+
+        unitOfWork.ApartmentRepository.Update(entity);
+        unitOfWork.ApartmentRepository.Save();
         return new ApiResponse();
     }
 
@@ -78,8 +77,8 @@ public class ApartmentController : ControllerBase
     [HttpDelete("{id}")]
     public ApiResponse Delete(int id)
     {
-        repository.DeleteById(id);
-        repository.Save();
+        unitOfWork.ApartmentRepository.DeleteById(id);
+        unitOfWork.ApartmentRepository.Save();
         return new ApiResponse();
     }
 }

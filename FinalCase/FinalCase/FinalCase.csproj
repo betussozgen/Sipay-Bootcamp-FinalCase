@@ -17,6 +17,14 @@
     <None Remove="Validator\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Controllers\PaymentController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Controllers\PaymentController.cs" />
+  </ItemGroup>
+
   
 
 	<ItemGroup>
@@ -43,6 +51,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FinalCase.DataAccess\FinalCase.DataAccess.csproj" />
+    <ProjectReference Include="..\FinalCase.Operation\FinalCase.Operation.csproj" />
     <ProjectReference Include="..\FinalCase.Schema\FinalCase.Schema.csproj" />
   </ItemGroup>
 
