@@ -1,0 +1,279 @@
+
+
+## Adım 1: Proje Analizi ve Tasarım: 
+Proje Analizi ve Tasarım üzerine düşünüp, karar verdikten sonra 2. adıma geçtim.
+## Adım 2: Veritabanı Oluşturma:
+Tabloları oluşturmak için veritabanı sistemi olarak PostreSQL kullandım ve .NET projesinde Entity Framework Core'i kullandım.Entity Framework Core, veritabanı tablolarını C# sınıflarına dönüştürmek ve otomatik olarak veritabanına yansıtmak için kullanışlı bir ORM (Object-Relational Mapping) aracıdır. Bu proje için 3 adet tablo modeli oluşturmaya karar verdim.Bunlar:
+1.Apartment Class:
+
+``` 
+public class Apartment
+{
+    public string Block { get; set; }
+    public bool IsOccupied { get; set; } //Dolu-Bos
+    public string Type { get; set;} //2+1
+    public int FloorNo { get; set;}
+    public int ApartmentNo { get; set; }
+    public bool IsOwner { get; set; } //kiracı-Sahibi
+
+    // Navigasyon Property
+    public virtual List<User> Users { get; set; }
+    public virtual ICollection<DueInvoice> DueInvoices { get; set; } 
+
+}
+``` 
+
+
+2.User Class:
+```
+public class User
+{
+     public string TcNo { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string Email { get; set; }
+    public string PhoneNumber { get; set; }
+    public bool CarInfo { get; set; }
+
+    // Navigasyon Property
+    public Role Role { get; set; }
+    public Apartment Apartment { get; set; }
+    public virtual List<Message> Messages { get; set; }
+}
+```
+
+3.Dues and invoices:
+```
+public class DuesInvoice
+{
+    public int DuesInvoiceId { get; set; }
+    public int ApartmentId { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+    public decimal MonthlyDues { get; set; }
+    public decimal WaterBill { get; set; }
+    public decimal ElectricityBill { get; set; }
+    public decimal GasBill { get; set; }
+
+    public Apartment Apartment { get; set; }
+}
+```
+4.Message:
+
+```
+ public int Id { get; set; }
+    public string Subject { get; set; }
+    public string Content { get; set; }
+    public bool IsRead { get; set; }
+    public DateTime DateSent { get; set; }
+
+    // Foreign Key
+    public int UserId { get; set; }
+
+    // Navigasyon Property
+    public User User { get; set; }
+```
+
+5.Role:
+
+```
+ public string RoleName { get; set; }
+
+    // Navigasyon Property
+    public virtual List<User> Users { get; set; }
+``` 
+
+Son olarak, veritabanı bağlantısını ve tabloları oluşturma işlemlerini gerçekleştirmek için DbContext sınıfını oluşturmalıyız. Burada FinalCaseDbContext sınıfı, DbContext sınıfını kalıtım alarak veritabanı bağlantısını sağlar ve DbSet özellikleri üzerinden tablolara erişim imkanı sunar.
+Veritabanı bağlantısını yapılandırmak için proje dosyanızda Startup.cs dosyasını düzenledim.
+
+``` 
+var dbType = Configuration.GetConnectionString("DbType");
+if (dbType == "Sql")
+    {
+        var dbConfig = Configuration.GetConnectionString("MsSqlConnection");
+        services.AddDbContext<FinalCaseDbContext>(opts =>
+        opts.UseSqlServer(dbConfig));
+    }
+    else if (dbType == "PostgreSql")
+    {
+        var dbConfig = Configuration.GetConnectionString("PostgreSqlConnection");
+        services.AddDbContext<FinalCaseDbContext>(opts =>
+        opts.UseNpgsql(dbConfig));
+    }
+```
+
+Son olarak, veritabanındaki tabloları oluşturmak için Migrations kullanarak veritabanını güncelledim.
+PAckage Manager Console'ı açarak, ``` Add-Migration InitialCreate```  komutunu ardından ``` Update-Database```  komutunu çalıştırarak veritabanındaki tabloları oluşturdum. Bu işlemlerden sonra artık tablolarım bulunmaktadır.
+
+## 
+AutoMapper implementasyonu gerçekleştirdim. Schema projesi ekledim. Modellerimi orada tanımladım.
+```
+<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.0" />
+	</ItemGroup>
+```
+
+
+Automapper Config'i oluşturdum. Profile dan türedi. burada mapping tanımlarını ekleyeceğim. Burada Requestve Response olarak dosyaları ekledim.
+
+response  ve request gibi sınıflar, istemci ve sunucu arasındaki iletişimi düzenlemek, veri güvenliğini sağlamak ve kodun daha düzenli ve esnek olmasını sağlamak amacıyla kullanılırlar.
+
+Request Classı : Bu sınıf, istemciden alınan verileri temsil etmek için kullanılır. Sadece talep edilen özelliklerin yer aldığı bir yapıdır. Diğer gereksiz özellikler bu sınıfta yer almaz.
+
+Response classı: Bu sınıf, sunucudan istemciye gönderilecek verileri temsil eder. İstemcinin sadece görmesi gereken özellikleri içerir. Diğer gereksiz özellikler bu sınıfta yer almaz.
+
+------Buraya istemci requst fotosu ekleyebilrisin!-----
+![alt text](Sipay-Bootcamp-FinalCase\FinalCase\FinalCase\Assets\RequestResponse.png)
+
+
+<img src="Sipay-Bootcamp-FinalCase\FinalCase\FinalCase\Assets\RequestResponse.png" width="auto">
+
+
+Tüm classların response ve request sayfaları oluşturuldu.
+
+
+
+Mapper Configi konumladndırdım.
+ Create map: nereden nereye mapliyeceğimi belirtiyorum.
+
+  AutoMapper kullanarak ApartmentRequest ve Apartment sınıfları arasında, ayrıca Apartment ve ApartmentResponse sınıfları arasında otomatik nesne dönüşümleri (mapping) sağlamak için profil konfigürasyonunu ayarlıyor gibi görünüyor. Bu, kodun daha temiz ve daha az tekrar içermesini sağlar, çünkü dönüşümleri manuel olarak yazmak yerine AutoMapper bu işlemi otomatik olarak yapar.
+Ekranlarda,metotlarda,controllerda
+dönüş tipi olarak response
+post ve put için request
+
+```startap.cs dosyasına mapper config olarak ekledim.
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MapperConfig());
+            });
+            services.AddSingleton(config.CreateMapper());
+```
+
+
+include()
+ThenInclude()
+
+
+Service Projesi oluşturdum.
+```
+public interface IGenericService<TEntity,TRequest,TResponse>
+{  ApiResponse<List<TResponse>> GetAll();
+    ApiResponse<TResponse> GetById(int id);
+    ApiResponse Insert(TRequest request);
+    ApiResponse Update(int id, TRequest request);
+    ApiResponse Delete(int id);}
+```
+Böyle bir sınıf oluşturdum. Amacım:
+Bu gibi bir sınıf yapısı genellikle bir API veya uygulamanın temel CRUD (Create, Read, Update, Delete) işlemlerini genelleştirilmiş bir şekilde yönetmek amacıyla kullanılır. 
+Tekrar Eden Kodları Azaltmak: 
+Kod Kalitesi ve Bakım Kolaylığı: 
+Kod Tekrarını Önlemek: 
+API Katmanındaki Tekrarları Azaltmak:
+Modülerlik ve Genişletilebilirlik: Bu tür bir yapı, yeni nesnelerin eklenmesi veya mevcut nesnelerin değiştirilmesi durumunda kolaylıkla genişletilebilir. Bu sayede uygulamanın modülerliği artar.
+
+Uow folderı oluşturdum.
+
+IUnitOfWork ve UnitOfWork sınıfları, veritabanı işlemlerini daha yönetilebilir ve etkili bir şekilde gerçekleştirmek için kullanılan bir tasarım deseni olan "Unit of Work" deseni (Çalışma Birimi deseni) ile ilgilidir. Bu desen, bir iş birimi içindeki tüm veritabanı işlemlerini gruplayarak, işlemlerin daha iyi yönetilmesini ve koordine edilmesini sağlar.
+
+IUnitOfWork.cs : temel CRUD (Create, Read, Update, Delete) işlemlerini içeren veritabanı işlemlerini bildiren metotları içerir.
+
+UniitOfWork.cs : Bu sınıf, farklı veritabanı işlemlerini gruplayarak iş birimi içinde yönetir. Aynı iş birimi içinde yapılan tüm işlemler, aynı veritabanı bağlantısını ve işlemi kullanır.
+
+
+Startup.cs Dosyasını da düzenlemem gerekiyor.
+
+
+conroller sınıflarını da düzelttikten sonra
+mapper ekleyeceğiz. mapper tanımı yapıcaz. loglayacağız. loglama yapcaz. 
+appsrttin dosyasının içerisine ekleme yaptım. Ottomatik log atmamızı sağlıyor.
+
+```
+ "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DbType": "PostgreSql",
+    "MsSqlConnection": "Server=DXXB\\PXC; Database=sipy;Trusted_Connection=True;",
+    "PostgreSqlConnection": "User ID=postgres;Password=12345;Server=localhost;Port=5435;Database=sipy;Integrated Security=true;Pooling=true;"
+  },
+  "JwtConfig": {
+    "Secret": "2A49DF37289D10E75308E22DD7C9C9B17826858F5DE3AF741A00B4B47C4C2353",
+    "Issuer": "SimApi",
+    "Audience": "SimApi",
+    "AccessTokenExpiration": 5
+  },
+  "Serilog": {
+    "Using": [],
+    "MinimumLevel": {
+      "Default": "Verbose",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level:u10}] {Message:lj} {NewLine}{Exception}{NewLine}",
+          "theme": "Serilog.Sinks.SystemConsole.Themes.SystemConsoleTheme::Literate, Serilog.Sinks.Console"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/log-.log",
+          "formatter": "Serilog.Formatting.Json.JsonFormatter, Serilog",
+          "rollingInterval": "Day",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      }
+    ],
+    "Enrich": [
+      "FromLogContext",
+      "WithMachineName",
+      "WithProcessId",
+      "WithThreadId"
+    ],
+    "Properties": {
+      "ApplicationName": "SimApi"
+    }
+  }
+}
+```
+
+program.cs te de register etmem lazım.
+
+sonra FinalCase.Base e ekleme yapıyorum
+<ItemGroup>
+		<PackageReference Include="LinqKit" Version="1.2.4" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+	</ItemGroup>
+
+    böylece Serilog konfigurasyonunu yapmış oluorum.
+
+
+    servisleri startup dosyasına register etmelisin
+
+
+    genericli yapılara include ekledi.
+    C# dilinde ve .NET Framework veya .NET Core gibi platformlarda, Entity Framework (EF) veya Entity Framework Core gibi ORM (Object-Relational Mapping) araçlarını kullanırken WithInclude veya sadece Include metodu, ilişkili verileri almak için kullanılır.
+
+Bu metod, LINQ sorguları içinde kullanılırken, veritabanında birden fazla tabloyu ilişkilendirme gereksinimini karşılar. Özellikle ilişkili tablolardan veri alırken, ana nesne ile ilişkili alt nesneleri (ilişkili verileri) almanıza olanak tanır. Bunu gerçekleştirmek için Include metodu kullanılarak ilişkili tablolardan veriler yüklenebilir.
+
+
+Dependency Injection
+Singleton --- api hizmeti ayağa kalktıktan sonra bir kere oluşup daha değişmiyor.
+Scoped - request sonlanana kadar aynı 
+Transient -- her seferinde yenilenir.
+
+
+Dependency Injection
+Singleton 
+Scoped 
+Transient 
+
+
+JWt -- yetkilendirme için kullanılıyor.
