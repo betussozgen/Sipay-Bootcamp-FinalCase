@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Payment\Payment.Service.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Payment\Payment.Service.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FinalCase.Base\FinalCase.Base.csproj" />
+    <ProjectReference Include="..\FinalCase.Schema\FinalCase.Schema.csproj" />
+  </ItemGroup>
+
+</Project>
