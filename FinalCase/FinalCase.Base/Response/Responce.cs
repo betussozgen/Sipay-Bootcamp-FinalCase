@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace SipayApi.Base;
+namespace FinalCase.Base;
 
 public partial class ApiResponse
 {
