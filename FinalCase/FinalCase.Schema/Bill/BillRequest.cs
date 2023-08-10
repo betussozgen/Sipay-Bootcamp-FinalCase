@@ -12,4 +12,5 @@ public class BillRequest
     public string Month { get; set; }
     public string Year { get; set; }
     public string Amount { get; set; }
+    public string BillType { get; set; }
 }

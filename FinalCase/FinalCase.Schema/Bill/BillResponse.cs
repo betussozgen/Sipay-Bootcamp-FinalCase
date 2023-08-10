@@ -5,17 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinalCase.Schema.Bill
+namespace FinalCase.Schema;
+
+public class BillResponse
 {
-    internal class BillResponse
-    {
-        public int BillId { get; set; }
-        public int ApartmentId { get; set; }
-        public string Month { get; set; }
-        public string Year { get; set; }
-        public string Amount { get; set; }
-        public int BillStatus { get; set; }
-        public Apartment Apartment { get; set; }
-        public ICollection<Payment> Payments { get; set; }
-    }
+    public int BillId { get; set; }
+    public int ApartmentId { get; set; }
+    public string Month { get; set; }
+    public string Year { get; set; }
+    public string Amount { get; set; }
+    public int BillStatus { get; set; }
+    public Apartment Apartment { get; set; }
+    public ICollection<PaymentResponse> Payments { get; set; }
 }
